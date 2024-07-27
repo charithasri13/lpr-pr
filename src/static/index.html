@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Plate Detection App</title>
+    <style>
+        img.result-image {
+            width: 140px;
+            height: 70px;
+            object-fit: cover;
+            margin: 10px; /* Added margin to create gap between images */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the License Plate Detection App</h1>
+    
+    <h2>Upload an Image for License Plate Detection</h2>
+    <form action="/detect-license-plates" method="post" enctype="multipart/form-data">
+        <label for="image">Choose an image file:</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+        <button type="submit">Upload</button>
+    </form>
+    
+    <h2>Results</h2>
+    <div id="results"></div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const response = await fetch('/detect-license-plates', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '';
+                data.files.forEach(file => {
+                    const img = document.createElement('img');
+                    img.src = file;
+                    img.classList.add('result-image');
+                    resultsDiv.appendChild(img);
+                });
+            } else {
+                alert('Failed to upload image');
+            }
+        });
+    </script>
+</body>
+</html>
